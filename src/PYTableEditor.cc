@@ -19,148 +19,33 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "PYStrokeEditor.h"
+#include "PYTableEditor.h"
 #include <string.h>
 #include <string>
 #include <vector>
 #include <libintl.h>
 #include <glib.h>
-#include <sqlite3.h>
+#include <glib/gstdio.h>
 #include "PYString.h"
 #include "PYConfig.h"
 
 #define _(text) (gettext (text))
 
+#define TABLE_DATABASE_ADD_FREQUENCY 10
+
 namespace PY {
 
-class StrokeDatabase{
-public:
-    StrokeDatabase(){
-        m_sqlite = NULL;
-        m_sql = "";
-    }
-
-    ~StrokeDatabase(){
-        if (m_sqlite){
-            sqlite3_close (m_sqlite);
-            m_sqlite = NULL;
-        }
-        m_sql = "";
-    }
-
-    gboolean isDatabaseExisted(const char *filename) {
-        gboolean result = g_file_test(filename, G_FILE_TEST_IS_REGULAR);
-        if (!result)
-            return FALSE;
-
-        sqlite3 *tmp_db = NULL;
-        if (sqlite3_open_v2 (filename, &tmp_db,
-                             SQLITE_OPEN_READONLY, NULL) != SQLITE_OK){
-            return FALSE;
-        }
-
-        /* Check the desc table */
-        sqlite3_stmt *stmt = NULL;
-        const char *tail = NULL;
-        m_sql = "SELECT value FROM desc WHERE name = 'version';";
-        result = sqlite3_prepare_v2 (tmp_db, m_sql.c_str(), -1, &stmt, &tail);
-        if (result != SQLITE_OK)
-            return FALSE;
-
-        result = sqlite3_step (stmt);
-        if (result != SQLITE_ROW)
-            return FALSE;
-
-        result = sqlite3_column_type (stmt, 0);
-        if (result != SQLITE_TEXT)
-            return FALSE;
-
-        const char *version = (const char *) sqlite3_column_text (stmt, 0);
-        if (strcmp("1.2.0", version) != 0)
-            return FALSE;
-
-        result = sqlite3_finalize (stmt);
-        g_assert (result == SQLITE_OK);
-        sqlite3_close (tmp_db);
-        return TRUE;
-    }
-
-    /* No self-learning here, and no user database file. */
-    gboolean openDatabase(const char *system_db) {
-        if (!isDatabaseExisted (system_db))
-            return FALSE;
-
-        /* open system database. */
-        if (sqlite3_open_v2 (system_db, &m_sqlite,
-                             SQLITE_OPEN_READONLY, NULL) != SQLITE_OK) {
-            m_sqlite = NULL;
-            return FALSE;
-        }
-
-        return TRUE;
-    }
-
-    /* List the characters in sequence order. */
-    gboolean listCharacters(const char *prefix,
-                            std::vector<std::string> & characters){
-        sqlite3_stmt *stmt = NULL;
-        const char *tail = NULL;
-        characters.clear ();
-
-        /* list characters */
-        const char *SQL_DB_LIST =
-            "SELECT \"character\", \"token\" FROM \"strokes\""
-            "WHERE \"strokes\" LIKE \"%s%\" ORDER BY \"sequence\" ASC;";
-        m_sql.printf (SQL_DB_LIST, prefix);
-        int result = sqlite3_prepare_v2 (m_sqlite, m_sql.c_str(), -1, &stmt, &tail);
-        if (result != SQLITE_OK)
-            return FALSE;
-
-        result = sqlite3_step (stmt);
-        while (result == SQLITE_ROW){
-            /* get the characters. */
-            result = sqlite3_column_type (stmt, 0);
-            if (result != SQLITE_TEXT)
-                return FALSE;
-
-            const char *character = (const char *)sqlite3_column_text (stmt, 0);
-            characters.push_back (character);
-
-            result = sqlite3_step (stmt);
-        }
-
-        sqlite3_finalize (stmt);
-        if (result != SQLITE_DONE)
-            return FALSE;
-        return TRUE;
-    }
-private:
-    sqlite3 *m_sqlite;
-    String m_sql;
-};
-
-StrokeEditor::StrokeEditor (PinyinProperties &props, Config &config)
+TableEditor::TableEditor (PinyinProperties &props, Config &config)
     : Editor (props, config)
 {
-    m_stroke_database = new StrokeDatabase;
-
-    gboolean result = m_stroke_database->openDatabase
-        (".." G_DIR_SEPARATOR_S "data" G_DIR_SEPARATOR_S "strokes.db") ||
-        m_stroke_database->openDatabase
-        (PKGDATADIR G_DIR_SEPARATOR_S "db" G_DIR_SEPARATOR_S "strokes.db");
-
-    if (!result)
-        g_warning ("can't open strokes database.\n");
 }
 
-StrokeEditor::~StrokeEditor ()
+TableEditor::~TableEditor ()
 {
-    delete m_stroke_database;
-    m_stroke_database = NULL;
 }
 
 gboolean
-StrokeEditor::processKeyEvent (guint keyval, guint keycode, guint modifiers)
+TableEditor::processKeyEvent (guint keyval, guint keycode, guint modifiers)
 {
     //IBUS_SHIFT_MASK is removed.
     modifiers &= (IBUS_CONTROL_MASK |
@@ -213,7 +98,7 @@ StrokeEditor::processKeyEvent (guint keyval, guint keycode, guint modifiers)
 }
 
 gboolean
-StrokeEditor::processEditKey (guint keyval)
+TableEditor::processEditKey (guint keyval)
 {
     switch (keyval) {
     case IBUS_Delete:
@@ -232,7 +117,7 @@ StrokeEditor::processEditKey (guint keyval)
 }
 
 gboolean
-StrokeEditor::processPageKey (guint keyval)
+TableEditor::processPageKey (guint keyval)
 {
     switch (keyval) {
     case IBUS_comma:
@@ -288,7 +173,7 @@ StrokeEditor::processPageKey (guint keyval)
 }
 
 gboolean
-StrokeEditor::processLabelKey (guint keyval)
+TableEditor::processLabelKey (guint keyval)
 {
     switch (keyval) {
     case '1' ... '9':
@@ -302,7 +187,7 @@ StrokeEditor::processLabelKey (guint keyval)
 }
 
 gboolean
-StrokeEditor::processEnter (guint keyval)
+TableEditor::processEnter (guint keyval)
 {
     if (keyval != IBUS_Return)
         return FALSE;
@@ -317,7 +202,7 @@ StrokeEditor::processEnter (guint keyval)
 }
 
 gboolean
-StrokeEditor::processSpace (guint keyval)
+TableEditor::processSpace (guint keyval)
 {
     if (!(keyval == IBUS_space || keyval == IBUS_KP_Space))
         return FALSE;
@@ -327,13 +212,13 @@ StrokeEditor::processSpace (guint keyval)
 }
 
 void
-StrokeEditor::candidateClicked (guint index, guint button, guint state)
+TableEditor::candidateClicked (guint index, guint button, guint state)
 {
     selectCandidateInPage (index);
 }
 
 gboolean
-StrokeEditor::selectCandidateInPage (guint index)
+TableEditor::selectCandidateInPage (guint index)
 {
     guint page_size = m_lookup_table.pageSize ();
     guint cursor_pos = m_lookup_table.cursorPos ();
@@ -346,20 +231,39 @@ StrokeEditor::selectCandidateInPage (guint index)
 }
 
 gboolean
-StrokeEditor::selectCandidate (guint index)
+TableEditor::selectCandidate (guint index)
 {
     if (index >= m_lookup_table.size ())
         return FALSE;
 
     IBusText *candidate = m_lookup_table.getCandidate (index);
     Text text (candidate);
+
+    if (m_config.useCustomTable ()) {
+        TableDatabase *table_database = &TableDatabase::userInstance ();
+        int freq = 0;
+        table_database->getPhraseInfo (text.text (), freq);
+        freq += TABLE_DATABASE_ADD_FREQUENCY;
+        table_database->updatePhrase (text.text (), freq);
+    }
+
     commitText (text);
     reset ();
     return TRUE;
 }
 
+TableDatabase *
+TableEditor::getTableDatabase (void)
+{
+    if (!m_config.useCustomTable ())
+        return &TableDatabase::systemInstance ();
+    else
+        return &TableDatabase::userInstance ();
+    return NULL;
+}
+
 gboolean
-StrokeEditor::updateStateFromInput (void)
+TableEditor::updateStateFromInput (void)
 {
     /* Do parse and candidates update here. */
     /* prefix u double check here. */
@@ -385,6 +289,9 @@ StrokeEditor::updateStateFromInput (void)
 
         const char * help_string =
             _("Please use \"hspnz\" to input.");
+        if (m_config.useCustomTable ())
+            help_string =
+                _("Please use table code to input.");
         int space_len = std::max ( 0, m_aux_text_len
                                    - (int) g_utf8_strlen (help_string, -1));
         m_auxiliary_text.append(space_len, ' ');
@@ -399,8 +306,9 @@ StrokeEditor::updateStateFromInput (void)
     m_auxiliary_text += prefix;
 
     /* lookup table candidate fill here. */
+    TableDatabase *table_database = getTableDatabase ();
     std::vector<std::string> characters;
-    gboolean retval = m_stroke_database->listCharacters
+    gboolean retval = table_database->listPhrases
         (prefix.c_str (), characters);
     if (!retval)
         return FALSE;
@@ -417,7 +325,7 @@ StrokeEditor::updateStateFromInput (void)
 /* Auxiliary Functions */
 
 void
-StrokeEditor::pageUp (void)
+TableEditor::pageUp (void)
 {
     if (G_LIKELY (m_lookup_table.pageUp ())) {
         update ();
@@ -425,7 +333,7 @@ StrokeEditor::pageUp (void)
 }
 
 void
-StrokeEditor::pageDown (void)
+TableEditor::pageDown (void)
 {
     if (G_LIKELY (m_lookup_table.pageDown ())) {
         update ();
@@ -433,7 +341,7 @@ StrokeEditor::pageDown (void)
 }
 
 void
-StrokeEditor::cursorUp (void)
+TableEditor::cursorUp (void)
 {
     if (G_LIKELY (m_lookup_table.cursorUp ())) {
         update ();
@@ -441,7 +349,7 @@ StrokeEditor::cursorUp (void)
 }
 
 void
-StrokeEditor::cursorDown (void)
+TableEditor::cursorDown (void)
 {
     if (G_LIKELY (m_lookup_table.cursorDown ())) {
         update ();
@@ -449,7 +357,7 @@ StrokeEditor::cursorDown (void)
 }
 
 void
-StrokeEditor::update (void)
+TableEditor::update (void)
 {
     updateLookupTable ();
     updatePreeditText ();
@@ -457,7 +365,7 @@ StrokeEditor::update (void)
 }
 
 void
-StrokeEditor::reset (void)
+TableEditor::reset (void)
 {
     m_text = "";
     updateStateFromInput ();
@@ -465,7 +373,7 @@ StrokeEditor::reset (void)
 }
 
 void
-StrokeEditor::clearLookupTable (void)
+TableEditor::clearLookupTable (void)
 {
     m_lookup_table.clear ();
     m_lookup_table.setPageSize (m_config.pageSize ());
@@ -473,7 +381,7 @@ StrokeEditor::clearLookupTable (void)
 }
 
 void
-StrokeEditor::updateLookupTable (void)
+TableEditor::updateLookupTable (void)
 {
     if (m_lookup_table.size ()){
         Editor::updateLookupTableFast (m_lookup_table, TRUE);
@@ -483,7 +391,7 @@ StrokeEditor::updateLookupTable (void)
 }
 
 void
-StrokeEditor::updatePreeditText (void)
+TableEditor::updatePreeditText (void)
 {
     if (G_UNLIKELY (m_preedit_text.empty ())) {
         hidePreeditText ();
@@ -495,7 +403,7 @@ StrokeEditor::updatePreeditText (void)
 }
 
 void
-StrokeEditor::updateAuxiliaryText (void)
+TableEditor::updateAuxiliaryText (void)
 {
     if (G_UNLIKELY (m_auxiliary_text.empty ())) {
         hideAuxiliaryText ();
@@ -507,7 +415,7 @@ StrokeEditor::updateAuxiliaryText (void)
 }
 
 gboolean
-StrokeEditor::removeCharBefore (void)
+TableEditor::removeCharBefore (void)
 {
     if (G_UNLIKELY (m_cursor <= 0)) {
         m_cursor = 0;
@@ -525,7 +433,7 @@ StrokeEditor::removeCharBefore (void)
 }
 
 gboolean
-StrokeEditor::removeCharAfter (void)
+TableEditor::removeCharAfter (void)
 {
     if (G_UNLIKELY (m_cursor < 0)) {
         m_cursor = 0;
@@ -543,27 +451,4 @@ StrokeEditor::removeCharAfter (void)
 
 }
 
-#if 0
-
-/* using static initializor to test stroke database here. */
-static class TestStrokeDatabase{
-public:
-    TestStrokeDatabase (){
-        StrokeDatabase *db = new StrokeDatabase ();
-        bool retval = db->isDatabaseExisted ("../data/strokes.db");
-        g_assert (retval);
-        retval = db->openDatabase ("../data/strokes.db");
-        g_assert (retval);
-        std::vector<std::string> chars;
-        std::vector<std::string>::iterator iter;
-        db->listCharacters("hshshhh", chars);
-        printf ("characters:\t");
-        for (iter = chars.begin(); iter != chars.end(); ++iter)
-            printf ("%s ", iter->c_str());
-        printf ("\n");
-        printf ("stroke database test ok.\n");
-    }
-} test_stroke_database;
-
-#endif
 };

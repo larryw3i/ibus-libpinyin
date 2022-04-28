@@ -32,6 +32,10 @@
 #include "PYPLibPinyinCandidates.h"
 #include "PYPTradCandidates.h"
 
+#ifdef IBUS_BUILD_ENGLISH_INPUT_MODE
+#include "PYPEnglishCandidates.h"
+#endif
+
 #ifdef IBUS_BUILD_LUA_EXTENSION
 #include "PYPLuaTriggerCandidates.h"
 #include "PYPLuaConverterCandidates.h"
@@ -80,6 +84,7 @@ protected:
     virtual gboolean removeCandidateInternal (EnhancedCandidate & candidate);
     gboolean selectCandidate (guint i);
     gboolean selectCandidateInPage (guint i);
+    void directCommit (const gchar *str);
 
     void commit () { selectCandidate (0); }
 
@@ -128,6 +133,10 @@ protected:
 #endif
 
     EmojiCandidates m_emoji_candidates;
+
+#ifdef IBUS_BUILD_ENGLISH_INPUT_MODE
+    EnglishCandidates m_english_candidates;
+#endif
 
     TraditionalCandidates m_traditional_candidates;
 

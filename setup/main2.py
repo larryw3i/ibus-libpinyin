@@ -148,8 +148,6 @@ class PreferencesDialog:
 
         self.__dynamic_adjust = self.__builder.get_object("DynamicAdjust")
         self.__remember_every_input = self.__builder.get_object("RememberEveryInput")
-        self.__show_suggestion = self.__builder.get_object("ShowSuggestion")
-        self.__emoji_candidate = self.__builder.get_object("EmojiCandidate")
         self.__sort_candidate_option = self.__builder.get_object("SortCandidateOption")
 
         # read values
@@ -164,8 +162,6 @@ class PreferencesDialog:
 
         self.__dynamic_adjust.set_active(self.__get_value("dynamic-adjust"))
         self.__remember_every_input.set_active(self.__get_value("remember-every-input"))
-        self.__show_suggestion.set_active(self.__get_value("show-suggestion"))
-        self.__emoji_candidate.set_active(self.__get_value("emoji-candidate"))
         self.__sort_candidate_option.set_active(self.__get_value("sort-candidate-option"))
         # connect signals
         self.__init_chinese.connect("toggled", self.__toggled_cb, "init-chinese")
@@ -174,8 +170,6 @@ class PreferencesDialog:
         self.__init_simp.connect("toggled", self.__toggled_cb, "init-simplified-chinese")
         self.__dynamic_adjust.connect("toggled", self.__toggled_cb, "dynamic-adjust")
         self.__remember_every_input.connect("toggled", self.__toggled_cb, "remember-every-input")
-        self.__show_suggestion.connect("toggled", self.__toggled_cb, "show-suggestion")
-        self.__emoji_candidate.connect("toggled", self.__toggled_cb, "emoji-candidate")
 
         def __display_size_changed_cb(widget):
             self.__set_value("display-style", widget.get_active())
@@ -205,12 +199,12 @@ class PreferencesDialog:
         self.__double_pinyin_schema = self.__builder.get_object("DoublePinyinSchema")
         # self.__double_pinyin_schema_label = self.__builder.get_object("labelDoublePinyinSchema")
         self.__double_pinyin_show_raw = self.__builder.get_object("DoublePinyinShowRaw")
-        self.__double_pinyin_show_raw.hide()
 
         # read value
         self.__incomplete_pinyin.set_active(self.__get_value("incomplete-pinyin"))
         self.__full_pinyin.set_active(not self.__get_value("double-pinyin"))
         self.__double_pinyin_schema.set_active(self.__get_value("double-pinyin-schema"))
+        self.__double_pinyin_show_raw.set_active(self.__get_value("double-pinyin-show-raw"))
         if self.__full_pinyin.get_active():
             # self.__incomplete_pinyin.set_sensitive(True)
             self.__double_pinyin_schema.set_sensitive(False)
@@ -356,12 +350,13 @@ class PreferencesDialog:
                 self.__builder.get_object(w[0]).set_sensitive(val)
         self.__fuzzy_pinyin.connect("toggled", __fuzzy_pinyin_toggled_cb)
 
-        # init value
+        # read values
         self.__fuzzy_pinyin.set_active(self.__get_value("fuzzy-pinyin"))
         for name, keyname in self.__fuzzy_pinyin_widgets:
             widget = self.__builder.get_object(name)
             widget.set_active(self.__get_value(keyname))
 
+        # connect signals
         self.__fuzzy_pinyin.connect("toggled", self.__toggled_cb, "fuzzy-pinyin")
         for name, keyname in self.__fuzzy_pinyin_widgets:
             widget = self.__builder.get_object(name)
@@ -408,20 +403,58 @@ class PreferencesDialog:
         path = os.path.join(pkgdatadir, 'user.lua')
         if not os.access(path, os.R_OK):
             self.__frame_lua_script.hide()
-
+        self.__frame_user_table = self.__builder.get_object("frameUserTable")
+        self.__lua_extension = self.__builder.get_object("LuaExtension")
+        self.__table_mode = self.__builder.get_object("TableMode")
+        self.__english_mode = self.__builder.get_object("EnglishMode")
+        self.__emoji_candidate = self.__builder.get_object("EmojiCandidate")
+        self.__english_candidate = self.__builder.get_object("EnglishCandidate")
+        self.__suggestion_candidate = self.__builder.get_object("SuggestionCandidate")
+        self.__import_table = self.__builder.get_object("ImportTable")
+        self.__export_table = self.__builder.get_object("ExportTable")
+        self.__clear_user_table = self.__builder.get_object("ClearUserTable")
         self.__edit_lua = self.__builder.get_object("EditLua")
-        self.__edit_lua.connect("clicked", self.__edit_lua_cb)
-
         self.__import_dictionary = self.__builder.get_object("ImportDictionary")
-        self.__import_dictionary.connect("clicked", self.__import_dictionary_cb)
-
         self.__export_dictionary = self.__builder.get_object("ExportDictionary")
-        self.__export_dictionary.connect("clicked", self.__export_dictionary_cb)
+        self.__clear_user_data = self.__builder.get_object("ClearUserDictionary")
+        self.__clear_all_data = self.__builder.get_object("ClearAllDictionary")
 
-        self.__clear_user_data = self.__builder.get_object("ClearUserData")
+        # read values
+        self.__frame_lua_script.set_sensitive(self.__get_value("lua-extension"))
+        self.__frame_user_table.set_sensitive(self.__get_value("table-input-mode"))
+        self.__lua_extension.set_active(self.__get_value("lua-extension"))
+        self.__table_mode.set_active(self.__get_value("table-input-mode"))
+        self.__english_mode.set_active(self.__get_value("english-input-mode"))
+        self.__emoji_candidate.set_active(self.__get_value("emoji-candidate"))
+        self.__english_candidate.set_active(self.__get_value("english-candidate"))
+        self.__suggestion_candidate.set_active(self.__get_value("suggestion-candidate"))
+
+        # connect signals
+        self.__lua_extension.connect("toggled", self.__lua_extension_cb)
+        self.__table_mode.connect("toggled", self.__table_mode_cb)
+        self.__english_mode.connect("toggled", self.__english_mode_cb)
+        self.__emoji_candidate.connect("toggled", self.__toggled_cb, "emoji-candidate")
+        self.__english_candidate.connect("toggled", self.__toggled_cb, "english-candidate")
+        self.__suggestion_candidate.connect("toggled", self.__toggled_cb, "suggestion-candidate")
+        self.__edit_lua.connect("clicked", self.__edit_lua_cb)
+        self.__import_dictionary.connect("clicked", self.__import_dictionary_cb, "import-dictionary")
+        self.__export_dictionary.connect("clicked", self.__export_dictionary_cb, "export-dictionary")
         self.__clear_user_data.connect("clicked", self.__clear_user_data_cb, "user")
-        self.__clear_all_data = self.__builder.get_object("ClearAllData")
         self.__clear_all_data.connect("clicked", self.__clear_user_data_cb, "all")
+        self.__import_table.connect("clicked", self.__import_table_cb, "import-custom-table")
+        self.__export_table.connect("clicked", self.__export_table_cb, "export-custom-table")
+        self.__clear_user_table.connect("clicked", self.__clear_user_table_cb, "clear-custom-table", "user")
+
+    def __lua_extension_cb(self, widget):
+        self.__set_value("lua-extension", widget.get_active())
+        self.__frame_lua_script.set_sensitive(widget.get_active())
+
+    def __table_mode_cb(self, widget):
+        self.__set_value("table-input-mode", widget.get_active())
+        self.__frame_user_table.set_sensitive(widget.get_active())
+
+    def __english_mode_cb(self, widget):
+        self.__set_value("english-input-mode", widget.get_active())
 
     def __edit_lua_cb(self, widget):
         import shutil
@@ -433,7 +466,7 @@ class PreferencesDialog:
             shutil.copyfile(src, path)
         os.system("xdg-open %s" % path)
 
-    def __import_dictionary_cb(self, widget):
+    def __get_import_filename(self):
         dialog = Gtk.FileChooserDialog \
             (title = _("Please choose a file"), parent = self.__dialog,
              action = Gtk.FileChooserAction.OPEN)
@@ -446,14 +479,15 @@ class PreferencesDialog:
         filter_text.add_mime_type("text/plain")
         dialog.add_filter(filter_text)
 
+        filename = None
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.__set_value("import-dictionary", "")
-            self.__set_value("import-dictionary", dialog.get_filename())
-
+            filename = dialog.get_filename()
         dialog.destroy()
 
-    def __export_dictionary_cb(self, widget):
+        return filename
+
+    def __get_export_filename(self):
         dialog = Gtk.FileChooserDialog \
                  (title = _("Please save a file"), parent = self.__dialog,
                   action = Gtk.FileChooserAction.SAVE)
@@ -468,15 +502,45 @@ class PreferencesDialog:
         filter_text.add_mime_type("text/plain")
         dialog.add_filter(filter_text)
 
+        filename = None
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.__set_value("export-dictionary", "")
-            self.__set_value("export-dictionary", dialog.get_filename())
-
+            filename = dialog.get_filename()
         dialog.destroy()
+
+        return filename
+
+    def __import_dictionary_cb(self, widget, name):
+        filename = self.__get_import_filename()
+        if filename:
+            self.__set_value(name, "")
+            self.__set_value(name, filename)
+
+    def __export_dictionary_cb(self, widget, name):
+        filename = self.__get_export_filename()
+        if filename:
+            self.__set_value(name, "")
+            self.__set_value(name, filename)
 
     def __clear_user_data_cb(self, widget, name):
         self.__set_value("clear-user-data", name)
+
+    def __import_table_cb(self, widget, name):
+        filename = self.__get_import_filename()
+        if filename:
+            self.__set_value(name, "")
+            self.__set_value(name, filename)
+            self.__set_value("use-custom-table", True)
+
+    def __export_table_cb(self, widget, name):
+        filename = self.__get_export_filename()
+        if filename:
+            self.__set_value(name, "")
+            self.__set_value(name, filename)
+
+    def __clear_user_table_cb(self, widget, name, value):
+        self.__set_value(name, value)
+        self.__set_value("use-custom-table", False)
 
     def __init_shortcut(self):
         # page Shortcut

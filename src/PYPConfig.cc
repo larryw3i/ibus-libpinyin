@@ -23,6 +23,7 @@
 #include <pinyin.h>
 #include "PYBus.h"
 #include "PYLibPinyin.h"
+#include "PYTableDatabase.h"
 
 #define USE_G_SETTINGS_LIST_KEYS 0
 
@@ -35,14 +36,13 @@ const gchar * const CONFIG_PAGE_SIZE                 = "lookup-table-page-size";
 const gchar * const CONFIG_DISPLAY_STYLE             = "display-style";
 const gchar * const CONFIG_REMEMBER_EVERY_INPUT      = "remember-every-input";
 const gchar * const CONFIG_SORT_OPTION               = "sort-candidate-option";
-const gchar * const CONFIG_SHOW_SUGGESTION           = "show-suggestion";
-const gchar * const CONFIG_EMOJI_CANDIDATE           = "emoji-candidate";
 const gchar * const CONFIG_SHIFT_SELECT_CANDIDATE    = "shift-select-candidate";
 const gchar * const CONFIG_MINUS_EQUAL_PAGE          = "minus-equal-page";
 const gchar * const CONFIG_COMMA_PERIOD_PAGE         = "comma-period-page";
 const gchar * const CONFIG_AUTO_COMMIT               = "auto-commit";
 const gchar * const CONFIG_DOUBLE_PINYIN             = "double-pinyin";
 const gchar * const CONFIG_DOUBLE_PINYIN_SCHEMA      = "double-pinyin-schema";
+const gchar * const CONFIG_DOUBLE_PINYIN_SHOW_RAW    = "double-pinyin-show-raw";
 const gchar * const CONFIG_INIT_CHINESE              = "init-chinese";
 const gchar * const CONFIG_INIT_FULL                 = "init-full";
 const gchar * const CONFIG_INIT_FULL_PUNCT           = "init-full-punct";
@@ -58,7 +58,14 @@ const gchar * const CONFIG_AUXILIARY_SELECT_KEY_KP   = "auxiliary-select-key-kp"
 const gchar * const CONFIG_ENTER_KEY                 = "enter-key";
 const gchar * const CONFIG_LUA_EXTENSION             = "lua-extension";
 const gchar * const CONFIG_ENGLISH_INPUT_MODE        = "english-input-mode";
-const gchar * const CONFIG_STROKE_INPUT_MODE         = "stroke-input-mode";
+const gchar * const CONFIG_TABLE_INPUT_MODE          = "table-input-mode";
+const gchar * const CONFIG_USE_CUSTOM_TABLE          = "use-custom-table";
+const gchar * const CONFIG_EMOJI_CANDIDATE           = "emoji-candidate";
+const gchar * const CONFIG_ENGLISH_CANDIDATE         = "english-candidate";
+const gchar * const CONFIG_SUGGESTION_CANDIDATE      = "suggestion-candidate";
+const gchar * const CONFIG_IMPORT_CUSTOM_TABLE       = "import-custom-table";
+const gchar * const CONFIG_EXPORT_CUSTOM_TABLE       = "export-custom-table";
+const gchar * const CONFIG_CLEAR_CUSTOM_TABLE        = "clear-custom-table";
 const gchar * const CONFIG_IMPORT_DICTIONARY         = "import-dictionary";
 const gchar * const CONFIG_EXPORT_DICTIONARY         = "export-dictionary";
 const gchar * const CONFIG_CLEAR_USER_DATA           = "clear-user-data";
@@ -126,16 +133,19 @@ LibPinyinConfig::initDefaultValues (void)
     m_display_style = DISPLAY_STYLE_TRADITIONAL;
     m_remember_every_input = FALSE;
     m_sort_option = SORT_BY_PHRASE_LENGTH_AND_PINYIN_LENGTH_AND_FREQUENCY;
-    m_show_suggestion = FALSE;
+
     m_emoji_candidate = TRUE;
+    m_english_candidate = TRUE;
+    m_suggestion_candidate = FALSE;
 
     m_shift_select_candidate = FALSE;
     m_minus_equal_page = TRUE;
-    m_comma_period_page = TRUE;
+    m_comma_period_page = FALSE;
     m_auto_commit = FALSE;
 
     m_double_pinyin = FALSE;
     m_double_pinyin_schema = DOUBLE_PINYIN_DEFAULT;
+    m_double_pinyin_show_raw = FALSE;
 
     m_init_chinese = TRUE;
     m_init_full = FALSE;
@@ -158,7 +168,8 @@ LibPinyinConfig::initDefaultValues (void)
 
     m_lua_extension = TRUE;
     m_english_input_mode = TRUE;
-    m_stroke_input_mode = TRUE;
+    m_table_input_mode = TRUE;
+    m_use_custom_table = FALSE;
 
     m_network_dictionary_start_timestamp = 0;
     m_network_dictionary_end_timestamp = 0;
@@ -228,6 +239,15 @@ LibPinyinConfig::readDefaultValues (void)
         gchar *name = *iter;
 
         /* skip signals here. */
+        if (0 == strcmp(CONFIG_IMPORT_CUSTOM_TABLE, name))
+            continue;
+
+        if (0 == strcmp(CONFIG_EXPORT_CUSTOM_TABLE, name))
+            continue;
+
+        if (0 == strcmp(CONFIG_CLEAR_CUSTOM_TABLE, name))
+            continue;
+
         if (0 == strcmp(CONFIG_IMPORT_DICTIONARY, name))
             continue;
 
@@ -279,8 +299,9 @@ LibPinyinConfig::readDefaultValues (void)
         }
     }
 
-    m_show_suggestion = read (CONFIG_SHOW_SUGGESTION, false);
     m_emoji_candidate = read (CONFIG_EMOJI_CANDIDATE, true);
+    m_english_candidate = read (CONFIG_ENGLISH_CANDIDATE, true);
+    m_suggestion_candidate = read (CONFIG_SUGGESTION_CANDIDATE, false);
 
     m_dictionaries = read (CONFIG_DICTIONARIES, "");
     m_opencc_config = read (CONFIG_OPENCC_CONFIG, "s2t.json");
@@ -380,10 +401,12 @@ LibPinyinConfig::valueChanged (const std::string &schema_id,
                 m_sort_option = sort_options[i].sort_option;
             }
         }
-    } else if (CONFIG_SHOW_SUGGESTION == name) {
-        m_show_suggestion = normalizeGVariant (value, false);
     } else if (CONFIG_EMOJI_CANDIDATE == name) {
         m_emoji_candidate = normalizeGVariant (value, true);
+    } else if (CONFIG_ENGLISH_CANDIDATE == name) {
+        m_english_candidate = normalizeGVariant (value, true);
+    } else if (CONFIG_SUGGESTION_CANDIDATE == name) {
+        m_suggestion_candidate = normalizeGVariant (value, false);
     } else if (CONFIG_DICTIONARIES == name) {
         m_dictionaries = normalizeGVariant (value, std::string (""));
     } else if (CONFIG_OPENCC_CONFIG == name) {
@@ -539,6 +562,8 @@ PinyinConfig::readDefaultValues (void)
         }
     }
 
+    m_double_pinyin_show_raw = read (CONFIG_DOUBLE_PINYIN_SHOW_RAW, false);
+
     /* init states */
     m_init_chinese = read (CONFIG_INIT_CHINESE, true);
     m_init_full = read (CONFIG_INIT_FULL, false);
@@ -548,12 +573,13 @@ PinyinConfig::readDefaultValues (void)
     /* other */
     m_shift_select_candidate = read (CONFIG_SHIFT_SELECT_CANDIDATE, false);
     m_minus_equal_page = read (CONFIG_MINUS_EQUAL_PAGE, true);
-    m_comma_period_page = read (CONFIG_COMMA_PERIOD_PAGE, true);
+    m_comma_period_page = read (CONFIG_COMMA_PERIOD_PAGE, false);
     m_auto_commit = read (CONFIG_AUTO_COMMIT, false);
 
     m_lua_extension = read (CONFIG_LUA_EXTENSION, true);
     m_english_input_mode = read (CONFIG_ENGLISH_INPUT_MODE, true);
-    m_stroke_input_mode = read (CONFIG_STROKE_INPUT_MODE, true);
+    m_table_input_mode = read (CONFIG_TABLE_INPUT_MODE, true);
+    m_use_custom_table = read (CONFIG_USE_CUSTOM_TABLE, false);
 
     /* lua */
     m_lua_converter = read (CONFIG_LUA_CONVERTER, "");
@@ -600,6 +626,8 @@ PinyinConfig::valueChanged (const std::string &schema_id,
             }
         }
     }
+    else if (CONFIG_DOUBLE_PINYIN_SHOW_RAW == name)
+        m_double_pinyin_show_raw = normalizeGVariant (value, false);
     /* init states */
     else if (CONFIG_INIT_CHINESE == name)
         m_init_chinese = normalizeGVariant (value, true);
@@ -615,7 +643,7 @@ PinyinConfig::valueChanged (const std::string &schema_id,
     else if (CONFIG_MINUS_EQUAL_PAGE == name)
         m_minus_equal_page = normalizeGVariant (value, true);
     else if (CONFIG_COMMA_PERIOD_PAGE == name)
-        m_comma_period_page = normalizeGVariant (value, true);
+        m_comma_period_page = normalizeGVariant (value, false);
     else if (CONFIG_LUA_CONVERTER == name)
         m_lua_converter = normalizeGVariant (value, std::string (""));
     else if (CONFIG_AUTO_COMMIT == name)
@@ -624,8 +652,25 @@ PinyinConfig::valueChanged (const std::string &schema_id,
         m_lua_extension = normalizeGVariant (value, true);
     else if (CONFIG_ENGLISH_INPUT_MODE == name)
         m_english_input_mode = normalizeGVariant (value, true);
-    else if (CONFIG_STROKE_INPUT_MODE == name)
-        m_stroke_input_mode = normalizeGVariant (value, true);
+    else if (CONFIG_TABLE_INPUT_MODE == name)
+        m_table_input_mode = normalizeGVariant (value, true);
+    else if (CONFIG_USE_CUSTOM_TABLE == name)
+        m_use_custom_table = normalizeGVariant (value, false);
+    else if (CONFIG_IMPORT_CUSTOM_TABLE == name) {
+        std::string filename = normalizeGVariant (value, std::string(""));
+        if (!filename.empty ())
+            TableDatabase::userInstance ().importTable (filename.c_str ());
+    }
+    else if (CONFIG_EXPORT_CUSTOM_TABLE == name) {
+        std::string filename = normalizeGVariant (value, std::string(""));
+        if (!filename.empty ())
+            TableDatabase::userInstance ().exportTable (filename.c_str ());
+    }
+    else if (CONFIG_CLEAR_CUSTOM_TABLE == name) {
+        std::string target = normalizeGVariant (value, std::string(""));
+        if (target == "user")
+            TableDatabase::userInstance ().clearTable ();
+    }
     else if (CONFIG_IMPORT_DICTIONARY == name) {
         std::string filename = normalizeGVariant (value, std::string(""));
         if (!filename.empty ())

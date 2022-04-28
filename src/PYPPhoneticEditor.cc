@@ -40,6 +40,9 @@ PhoneticEditor::PhoneticEditor (PinyinProperties &props,
 #ifdef ENABLE_CLOUD_INPUT_MODE
     m_cloud_candidates(this),
 #endif
+#ifdef IBUS_BUILD_ENGLISH_INPUT_MODE
+    m_english_candidates (this),
+#endif
     m_traditional_candidates (this, config)
 {
 }
@@ -251,6 +254,11 @@ PhoneticEditor::updateCandidates (void)
     if (!m_props.modeSimp ())
         m_traditional_candidates.processCandidates (m_candidates);
 
+#ifdef IBUS_BUILD_ENGLISH_INPUT_MODE
+    if (m_config.englishCandidate ())
+        m_english_candidates.processCandidates (m_candidates);
+#endif
+
     return TRUE;
 }
 
@@ -376,6 +384,11 @@ PhoneticEditor::selectCandidateInternal (EnhancedCandidate & candidate)
     case CANDIDATE_TRADITIONAL_CHINESE:
         return m_traditional_candidates.selectCandidate (candidate);
 
+#ifdef IBUS_BUILD_ENGLISH_INPUT_MODE
+    case CANDIDATE_ENGLISH:
+        return  m_english_candidates.selectCandidate (candidate);
+#endif
+
 #ifdef ENABLE_CLOUD_INPUT_MODE
     case CANDIDATE_CLOUD_INPUT:
         return m_cloud_candidates.selectCandidate (candidate);
@@ -408,6 +421,11 @@ PhoneticEditor::removeCandidateInternal (EnhancedCandidate & candidate)
 
     case CANDIDATE_TRADITIONAL_CHINESE:
         return m_traditional_candidates.removeCandidate (candidate);
+
+#ifdef IBUS_BUILD_ENGLISH_INPUT_MODE
+    case CANDIDATE_ENGLISH:
+        return m_english_candidates.removeCandidate (candidate);
+#endif
 
 #ifdef IBUS_BUILD_LUA_EXTENSION
     case CANDIDATE_LUA_TRIGGER:
@@ -489,6 +507,9 @@ PhoneticEditor::selectCandidate (guint index)
     if (action & SELECT_CANDIDATE_UPDATE)
         update ();
 
+    if (action & SELECT_CANDIDATE_DIRECT_COMMIT)
+        directCommit (candidate.m_display_string.c_str ());
+
     return TRUE;
 }
 
@@ -503,6 +524,18 @@ PhoneticEditor::selectCandidateInPage (guint i)
     i += (cursor_pos / page_size) * page_size;
 
     return selectCandidate (i);
+}
+
+void
+PhoneticEditor::directCommit (const gchar *str)
+{
+    if (G_UNLIKELY (m_text.empty ()))
+        return;
+
+    Text text (str);
+    commitText (text);
+
+    reset();
 }
 
 gboolean

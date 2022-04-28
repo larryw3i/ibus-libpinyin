@@ -23,6 +23,7 @@
 
 #include "PYEditor.h"
 #include "PYLookupTable.h"
+#include "PYEnglishDatabase.h"
 
 namespace PY {
 
@@ -64,8 +65,6 @@ private:
     gboolean processLabelKey(guint keyval);
     gboolean processEditKey(guint keyval);
     gboolean processPageKey(guint keyval);
-
-    gboolean train(const char *word, float delta);
 
 private:
     /* variables */

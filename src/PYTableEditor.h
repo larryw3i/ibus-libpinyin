@@ -19,20 +19,22 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __PY_STROKE_EDITOR_
-#define __PY_STROKE_EDITOR_
+#ifndef __PY_TABLE_EDITOR_
+#define __PY_TABLE_EDITOR_
 
 #include "PYEditor.h"
 #include "PYLookupTable.h"
+#include "PYTableDatabase.h"
 
 namespace PY {
 
-class StrokeDatabase;
+class PinyinEngine;
 
-class StrokeEditor : public Editor {
+class TableEditor : public Editor {
+    friend class PinyinEngine;
 public:
-    StrokeEditor (PinyinProperties &props, Config & config);
-    virtual ~StrokeEditor ();
+    TableEditor (PinyinProperties &props, Config & config);
+    virtual ~TableEditor ();
 
     virtual gboolean processKeyEvent (guint keyval, guint keycode, guint modifers);
     virtual void pageUp (void);
@@ -44,6 +46,7 @@ public:
     virtual void candidateClicked (guint index, guint button, guint state);
 
 private:
+    TableDatabase *getTableDatabase (void);
     gboolean updateStateFromInput (void);
 
     void clearLookupTable (void);
@@ -70,8 +73,6 @@ private:
 
     String m_preedit_text;
     String m_auxiliary_text;
-
-    StrokeDatabase *m_stroke_database;
 
     const static int m_aux_text_len = 50;
 };

@@ -38,7 +38,8 @@ enum CandidateType {
     CANDIDATE_LUA_CONVERTER,
     CANDIDATE_SUGGESTION,
     CANDIDATE_CLOUD_INPUT,
-    CANDIDATE_EMOJI
+    CANDIDATE_EMOJI,
+    CANDIDATE_ENGLISH
 };
 
 enum SelectCandidateAction {
@@ -48,7 +49,9 @@ enum SelectCandidateAction {
     /* modify the current candidate in place */
     SELECT_CANDIDATE_MODIFY_IN_PLACE = 0x2,
     /* need to call update method in class Editor. */
-    SELECT_CANDIDATE_UPDATE = 0x4
+    SELECT_CANDIDATE_UPDATE = 0x4,
+    /* commit the text without append the rest input after the pinyin */
+    SELECT_CANDIDATE_DIRECT_COMMIT = 0x8
 };
 
 struct EnhancedCandidate {

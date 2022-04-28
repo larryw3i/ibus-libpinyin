@@ -57,8 +57,11 @@ ibus_engine_libpinyin_h_sources = \
 	PYText.h \
 	PYTypes.h \
 	PYUtil.h \
-	PYStrokeEditor.h \
+	PYTableDatabase.h \
+	PYTableEditor.h \
+	PYEnglishDatabase.h \
 	PYEnglishEditor.h \
+	PYPEnglishCandidates.h \
 	PYLibPinyin.h \
 	PYPPhoneticEditor.h \
 	PYPPinyinEditor.h \
@@ -114,12 +117,19 @@ ibus_engine_libpinyin_c_sources += \
 	$(NULL)
 endif
 
-if IBUS_BUILD_STROKE_INPUT_MODE
-ibus_engine_libpinyin_c_sources += PYStrokeEditor.cc
+if IBUS_BUILD_TABLE_INPUT_MODE
+ibus_engine_libpinyin_c_sources += \
+	PYTableDatabase.cc \
+	PYTableEditor.cc \
+	$(NULL)
 endif
 
 if IBUS_BUILD_ENGLISH_INPUT_MODE
-ibus_engine_libpinyin_c_sources += PYEnglishEditor.cc
+ibus_engine_libpinyin_c_sources += \
+	PYEnglishDatabase.cc \
+	PYEnglishEditor.cc \
+	PYPEnglishCandidates.cc \
+	$(NULL)
 endif
 
 ibus_engine_libpinyin_SOURCES = \
@@ -199,9 +209,9 @@ if IBUS_BUILD_ENGLISH_INPUT_MODE
 	$(NULL)
 endif
 
-if IBUS_BUILD_STROKE_INPUT_MODE
+if IBUS_BUILD_TABLE_INPUT_MODE
    ibus_engine_libpinyin_CXXFLAGS += \
-	-DIBUS_BUILD_STROKE_INPUT_MODE \
+	-DIBUS_BUILD_TABLE_INPUT_MODE \
 	$(NULL)
 endif
 

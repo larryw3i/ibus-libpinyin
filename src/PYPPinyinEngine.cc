@@ -31,8 +31,8 @@
 #ifdef IBUS_BUILD_ENGLISH_INPUT_MODE
 #include "PYEnglishEditor.h"
 #endif
-#ifdef IBUS_BUILD_STROKE_INPUT_MODE
-#include "PYStrokeEditor.h"
+#ifdef IBUS_BUILD_TABLE_INPUT_MODE
+#include "PYTableEditor.h"
 #endif
 #include "PYPFullPinyinEditor.h"
 #include "PYPDoublePinyinEditor.h"
@@ -93,10 +93,10 @@ PinyinEngine::PinyinEngine (IBusEngine *engine)
 #else
     m_editors[MODE_ENGLISH].reset (new Editor (m_props, PinyinConfig::instance ()));
 #endif
-#ifdef IBUS_BUILD_STROKE_INPUT_MODE
-    m_editors[MODE_STROKE].reset (new StrokeEditor (m_props, PinyinConfig::instance ()));
+#ifdef IBUS_BUILD_TABLE_INPUT_MODE
+    m_editors[MODE_TABLE].reset (new TableEditor (m_props, PinyinConfig::instance ()));
 #else
-    m_editors[MODE_STROKE].reset (new Editor (m_props, PinyinConfig::instance ()));
+    m_editors[MODE_TABLE].reset (new Editor (m_props, PinyinConfig::instance ()));
 #endif
 
     {
@@ -179,8 +179,8 @@ PinyinEngine::processAccelKeyEvent (guint keyval, guint keycode,
                 m_editors[MODE_INIT]->reset ();
             }
 
-            if (!m_editors[MODE_STROKE]->text ().empty ())
-                m_editors[MODE_STROKE]->reset ();
+            if (!m_editors[MODE_TABLE]->text ().empty ())
+                m_editors[MODE_TABLE]->reset ();
 
             if (!m_editors[MODE_SUGGESTION]->text ().empty ())
                 m_editors[MODE_SUGGESTION]->reset ();
@@ -330,17 +330,17 @@ PinyinEngine::processKeyEvent (guint keyval, guint keycode, guint modifiers)
                     m_input_mode = MODE_ENGLISH;
                     break;
 #endif
-#ifdef IBUS_BUILD_STROKE_INPUT_MODE
+#ifdef IBUS_BUILD_TABLE_INPUT_MODE
                 case IBUS_u:
-                    if (!PinyinConfig::instance ().strokeInputMode ())
+                    if (!PinyinConfig::instance ().tableInputMode ())
                         break;
                     // for full pinyin
                     if (PinyinConfig::instance ().doublePinyin ())
                         break;
-                    m_input_mode = MODE_STROKE;
+                    m_input_mode = MODE_TABLE;
                     break;
                 case IBUS_U:
-                    if (!PinyinConfig::instance ().strokeInputMode ())
+                    if (!PinyinConfig::instance ().tableInputMode ())
                         break;
                     // for double pinyin
                     if (!PinyinConfig::instance ().doublePinyin ())
@@ -348,12 +348,44 @@ PinyinEngine::processKeyEvent (guint keyval, guint keycode, guint modifiers)
                     // for Caps Lock
                     if (modifiers & IBUS_LOCK_MASK)
                         break;
-                    m_input_mode = MODE_STROKE;
+                    m_input_mode = MODE_TABLE;
                     break;
 #endif
                 }
+
+#ifdef IBUS_BUILD_ENGLISH_INPUT_MODE
+                // for full pinyin
+                if ((IBUS_A <= keyval && keyval<= IBUS_Z) &&
+                    PinyinConfig::instance ().englishInputMode () &&
+                    !PinyinConfig::instance ().doublePinyin ()) {
+                    m_input_mode = MODE_ENGLISH;
+                    m_editors[m_input_mode]->setText ("v", 1);
+                }
+#endif
+
             } else {
-                /* TODO: Unknown */
+#ifdef IBUS_BUILD_TABLE_INPUT_MODE
+                // for table mode switch with tab key
+                if (keyval == IBUS_Tab &&
+                    m_input_mode == MODE_INIT &&
+                    PinyinConfig::instance ().tableInputMode ()) {
+                    String text;
+                    if (!PinyinConfig::instance ().doublePinyin ())
+                        text = "u"; // full pinyin
+                    else
+                        text = "U"; // double pinyin
+                    text += m_editors[m_input_mode]->text ();
+                    m_editors[m_input_mode]->setText ("", 0);
+
+                    m_input_mode = MODE_TABLE;
+                    m_editors[m_input_mode]->setText (text, text.length ());
+                    Editor * editor = m_editors[m_input_mode].get ();
+                    /* Note: consider to remove the updateStateFromInput method call here. */
+                    dynamic_cast<TableEditor *>(editor)->updateStateFromInput ();
+                    m_editors[m_input_mode]->update ();
+                    return TRUE;
+                }
+#endif
             }
         }
         retval = m_editors[m_input_mode]->processKeyEvent (keyval, keycode, modifiers);
@@ -499,7 +531,7 @@ PinyinEngine::commitText (Text & text)
 
     if (m_input_mode != MODE_INIT && m_input_mode != MODE_SUGGESTION) {
         m_input_mode = MODE_INIT;
-    } else if (PinyinConfig::instance ().showSuggestion ()) {
+    } else if (PinyinConfig::instance ().suggestionCandidate ()) {
         m_input_mode = MODE_SUGGESTION;
         m_editors[m_input_mode]->setText (text.text (), 0);
         m_need_update = TRUE;

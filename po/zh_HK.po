@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: ibus-libpinyin 1.3.5\n"
 "Report-Msgid-Bugs-To: https://github.com/libpinyin/ibus-libpinyin/issues/"
 "new\n"
-"POT-Creation-Date: 2020-09-13 12:36+0800\n"
+"POT-Creation-Date: 2022-04-12 15:07+0800\n"
 "PO-Revision-Date: 2020-09-15 02:08+0000\n"
 "Last-Translator: Hillwood Yang <hillwoodroc@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <https://translate.fedoraproject.org/"
@@ -16,33 +16,33 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.2.2\n"
 
-#: src/PYMain.cc:97
+#: src/PYMain.cc:111
 msgid "Libpinyin input method"
 msgstr "智能拼音輸入法"
 
-#: src/PYMain.cc:107
+#: src/PYMain.cc:121
 msgid "Intelligent Pinyin (debug)"
 msgstr "智能拼音（調試）"
 
-#: src/PYMain.cc:108
+#: src/PYMain.cc:122
 msgid "Intelligent Pinyin input method (debug)"
 msgstr "智能拼音輸入法（調試）"
 
-#: src/PYMain.cc:118
+#: src/PYMain.cc:132
 msgid "Bopomofo (debug)"
 msgstr "注音模式（調試）"
 
-#: src/PYMain.cc:119
+#: src/PYMain.cc:133
 msgid "Bopomofo input method (debug)"
 msgstr "注音輸入法（調試）"
 
 #: src/PYPinyinProperties.cc:39 src/PYPinyinProperties.cc:104
-#: setup/ibus-libpinyin-preferences.ui:267
+#: setup/ibus-libpinyin-preferences.ui:273
 msgid "Chinese"
 msgstr "中文"
 
 #: src/PYPinyinProperties.cc:40 src/PYPinyinProperties.cc:105
-#: setup/ibus-libpinyin-preferences.ui:282
+#: setup/ibus-libpinyin-preferences.ui:288
 msgid "English"
 msgstr "英文"
 
@@ -103,7 +103,7 @@ msgid "Switch to Simplfied Chinese Mode"
 msgstr "切換至簡體中文模式"
 
 #: src/PYPinyinProperties.cc:82 src/PYPinyinProperties.cc:84
-#: setup/ibus-libpinyin-preferences.ui:154
+#: setup/ibus-libpinyin-preferences.ui:160
 msgid "Preferences"
 msgstr "偏好設定"
 
@@ -115,23 +115,28 @@ msgstr "中"
 msgid "英"
 msgstr "英"
 
-#: src/PYEnglishEditor.cc:618
+#: src/PYEnglishEditor.cc:276
 msgid "Please input the English word."
 msgstr "請輸入英文單詞。"
 
-#: src/PYStrokeEditor.cc:387
+#: src/PYTableEditor.cc:291
 msgid "Please use \"hspnz\" to input."
 msgstr "請用 \"hspnz\" 筆畫輸入中文字符。"
 
-#: setup/main2.py:438
+#: src/PYTableEditor.cc:294
+#, fuzzy
+msgid "Please use table code to input."
+msgstr "請用 \"hspnz\" 筆畫輸入中文字符。"
+
+#: setup/main2.py:471
 msgid "Please choose a file"
 msgstr "請選定文件"
 
-#: setup/main2.py:456
+#: setup/main2.py:492
 msgid "Please save a file"
 msgstr "請保存文件"
 
-#: setup/main2.py:567 setup/ibus-libpinyin-preferences.ui:2466
+#: setup/main2.py:636 setup/ibus-libpinyin-preferences.ui:2695
 #, python-format
 msgid "<big><b>Intelligent Pinyin %s</b></big>"
 msgstr "<big><b>智能 拼音 %s</b></big>"
@@ -300,308 +305,346 @@ msgstr "百度"
 msgid "Google"
 msgstr "谷歌"
 
-#: setup/ibus-libpinyin-preferences.ui:54
+#: setup/ibus-libpinyin-preferences.ui:46
+#, fuzzy
+msgid "Google CN"
+msgstr "谷歌"
+
+#: setup/ibus-libpinyin-preferences.ui:57
 msgid "Default"
 msgstr "默認值"
 
-#: setup/ibus-libpinyin-preferences.ui:57
+#: setup/ibus-libpinyin-preferences.ui:60
 msgid "Compact"
 msgstr "壓縮"
 
-#: setup/ibus-libpinyin-preferences.ui:68
+#: setup/ibus-libpinyin-preferences.ui:63
+#, fuzzy
+msgid "Compatibility"
+msgstr "壓縮"
+
+#: setup/ibus-libpinyin-preferences.ui:74
 msgid "MSPY"
 msgstr "微軟拼音"
 
-#: setup/ibus-libpinyin-preferences.ui:71
+#: setup/ibus-libpinyin-preferences.ui:77
 msgid "ZRM"
 msgstr "自然碼"
 
-#: setup/ibus-libpinyin-preferences.ui:74
+#: setup/ibus-libpinyin-preferences.ui:80
 msgid "ABC"
 msgstr "智能ABC"
 
-#: setup/ibus-libpinyin-preferences.ui:77
+#: setup/ibus-libpinyin-preferences.ui:83
 msgid "ZGPY"
 msgstr "紫光拼音"
 
-#: setup/ibus-libpinyin-preferences.ui:80
+#: setup/ibus-libpinyin-preferences.ui:86
 msgid "PYJJ"
 msgstr "拼音加加"
 
-#: setup/ibus-libpinyin-preferences.ui:83
+#: setup/ibus-libpinyin-preferences.ui:89
 msgid "XHE"
 msgstr "小鶴"
 
-#: setup/ibus-libpinyin-preferences.ui:94
+#: setup/ibus-libpinyin-preferences.ui:100
 msgid "Horizontal"
 msgstr "水平"
 
-#: setup/ibus-libpinyin-preferences.ui:97
+#: setup/ibus-libpinyin-preferences.ui:103
 msgid "Vertical"
 msgstr "豎直"
 
-#: setup/ibus-libpinyin-preferences.ui:143
+#: setup/ibus-libpinyin-preferences.ui:149
 msgid "Frequency"
 msgstr "詞頻"
 
-#: setup/ibus-libpinyin-preferences.ui:146
+#: setup/ibus-libpinyin-preferences.ui:152
 msgid "Pinyin Length"
 msgstr "拼音長度"
 
-#: setup/ibus-libpinyin-preferences.ui:237
+#: setup/ibus-libpinyin-preferences.ui:243
 msgid "Language:"
 msgstr "語言："
 
-#: setup/ibus-libpinyin-preferences.ui:245
+#: setup/ibus-libpinyin-preferences.ui:251
 msgid "Half/full width:"
 msgstr "全形/半形："
 
-#: setup/ibus-libpinyin-preferences.ui:257
+#: setup/ibus-libpinyin-preferences.ui:263
 msgid "Punctuations:"
 msgstr "標點符號："
 
-#: setup/ibus-libpinyin-preferences.ui:297
-#: setup/ibus-libpinyin-preferences.ui:331
+#: setup/ibus-libpinyin-preferences.ui:303
+#: setup/ibus-libpinyin-preferences.ui:337
 msgid "Full"
 msgstr "全形"
 
-#: setup/ibus-libpinyin-preferences.ui:314
-#: setup/ibus-libpinyin-preferences.ui:348
+#: setup/ibus-libpinyin-preferences.ui:320
+#: setup/ibus-libpinyin-preferences.ui:354
 msgid "Half"
 msgstr "半形"
 
-#: setup/ibus-libpinyin-preferences.ui:367
+#: setup/ibus-libpinyin-preferences.ui:373
 msgid "Chinese:"
 msgstr "中文："
 
-#: setup/ibus-libpinyin-preferences.ui:377
+#: setup/ibus-libpinyin-preferences.ui:383
 msgid "Simplified"
 msgstr "簡體"
 
-#: setup/ibus-libpinyin-preferences.ui:394
+#: setup/ibus-libpinyin-preferences.ui:400
 msgid "Traditional"
 msgstr "繁體"
 
-#: setup/ibus-libpinyin-preferences.ui:417
+#: setup/ibus-libpinyin-preferences.ui:423
 msgid "<b>Initial state</b>"
 msgstr "<b>初始狀態</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:455
+#: setup/ibus-libpinyin-preferences.ui:461
 msgid "Display Style:"
 msgstr "顯示風格："
 
-#: setup/ibus-libpinyin-preferences.ui:501
+#: setup/ibus-libpinyin-preferences.ui:507
 msgid "Orientation of candidates:"
 msgstr "候選詞排列方向："
 
-#: setup/ibus-libpinyin-preferences.ui:547
+#: setup/ibus-libpinyin-preferences.ui:553
 msgid "Number of candidates:"
 msgstr "每頁顯示候選詞條目數量："
 
-#: setup/ibus-libpinyin-preferences.ui:586
+#: setup/ibus-libpinyin-preferences.ui:592
 msgid "<b>UI</b>"
 msgstr "<b>外觀</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:615
+#: setup/ibus-libpinyin-preferences.ui:621
 msgid "Dynamically adjust the candidates order."
 msgstr "動態調整候詞序。"
 
-#: setup/ibus-libpinyin-preferences.ui:630
+#: setup/ibus-libpinyin-preferences.ui:636
 msgid "Remember every input as a phrase."
 msgstr "將每個輸入記錄為新詞。"
 
-#: setup/ibus-libpinyin-preferences.ui:645
-msgid "Show suggestions."
-msgstr "顯示建議。"
-
-#: setup/ibus-libpinyin-preferences.ui:660
-msgid "Show emoji."
-msgstr "顯示表情符號。"
-
-#: setup/ibus-libpinyin-preferences.ui:683
+#: setup/ibus-libpinyin-preferences.ui:659
 msgid "Sort candidates by:"
 msgstr "候選詞排列順序："
 
-#: setup/ibus-libpinyin-preferences.ui:726
+#: setup/ibus-libpinyin-preferences.ui:702
 msgid "<b>Candidates</b>"
 msgstr "<b>候選詞</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:745
+#: setup/ibus-libpinyin-preferences.ui:721
 msgid "General"
 msgstr "常規"
 
-#: setup/ibus-libpinyin-preferences.ui:789
+#: setup/ibus-libpinyin-preferences.ui:761
 msgid "Full pinyin"
 msgstr "全拼"
 
-#: setup/ibus-libpinyin-preferences.ui:811
+#: setup/ibus-libpinyin-preferences.ui:782
 msgid "Double pinyin"
 msgstr "雙拼"
 
-#: setup/ibus-libpinyin-preferences.ui:862
+#: setup/ibus-libpinyin-preferences.ui:825
 msgid "Show raw input of Double Pinyin"
 msgstr "顯示雙拼原始輸入"
 
-#: setup/ibus-libpinyin-preferences.ui:878
+#: setup/ibus-libpinyin-preferences.ui:840
 msgid "Incomplete pinyin"
 msgstr "簡拼"
 
-#: setup/ibus-libpinyin-preferences.ui:901
+#: setup/ibus-libpinyin-preferences.ui:862
 msgid "<b>Pinyin mode</b>"
 msgstr "<b>拼音模式</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:940
+#: setup/ibus-libpinyin-preferences.ui:901
 msgid "[Shift] select candidate"
 msgstr "[Shift]鍵選詞"
 
-#: setup/ibus-libpinyin-preferences.ui:950
+#: setup/ibus-libpinyin-preferences.ui:911
 msgid "[-] [=] flip page"
 msgstr "[-][=]鍵翻頁"
 
-#: setup/ibus-libpinyin-preferences.ui:965
+#: setup/ibus-libpinyin-preferences.ui:926
 msgid "[,] [.] flip page"
 msgstr "[,][.]鍵翻頁"
 
-#: setup/ibus-libpinyin-preferences.ui:980
+#: setup/ibus-libpinyin-preferences.ui:941
 msgid "Auto commit"
 msgstr "自動上詞"
 
-#: setup/ibus-libpinyin-preferences.ui:1009
+#: setup/ibus-libpinyin-preferences.ui:970
 msgid "<b>Input Custom</b>"
 msgstr "<b>輸入配置</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:1157
+#: setup/ibus-libpinyin-preferences.ui:1118
 msgid "Enable pinyin correction"
 msgstr "啓用拼音糾錯"
 
-#: setup/ibus-libpinyin-preferences.ui:1193
+#: setup/ibus-libpinyin-preferences.ui:1154
 msgid "<b>Correct pinyin</b>"
 msgstr "<b>拼音糾錯</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:1223
-#: setup/ibus-libpinyin-preferences.ui:1662
+#: setup/ibus-libpinyin-preferences.ui:1184
+#: setup/ibus-libpinyin-preferences.ui:1623
 msgid "Enable Cloud Input"
 msgstr "激活雲輸入"
 
-#: setup/ibus-libpinyin-preferences.ui:1247
-#: setup/ibus-libpinyin-preferences.ui:1686
+#: setup/ibus-libpinyin-preferences.ui:1208
+#: setup/ibus-libpinyin-preferences.ui:1647
 msgid "Source From:"
 msgstr "輸入源："
 
-#: setup/ibus-libpinyin-preferences.ui:1292
-#: setup/ibus-libpinyin-preferences.ui:1731
+#: setup/ibus-libpinyin-preferences.ui:1253
+#: setup/ibus-libpinyin-preferences.ui:1692
 msgid "<b>Cloud Input Option</b>"
 msgstr "<b>雲輸入配置</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:1314
+#: setup/ibus-libpinyin-preferences.ui:1275
 msgid "Pinyin mode"
 msgstr "拼音模式"
 
-#: setup/ibus-libpinyin-preferences.ui:1353
+#: setup/ibus-libpinyin-preferences.ui:1314
 msgid "Incomplete Bopomofo"
 msgstr "簡拼"
 
-#: setup/ibus-libpinyin-preferences.ui:1376
+#: setup/ibus-libpinyin-preferences.ui:1337
 msgid "Keyboard Mapping:"
 msgstr "鍵盤映射："
 
-#: setup/ibus-libpinyin-preferences.ui:1419
+#: setup/ibus-libpinyin-preferences.ui:1380
 msgid "<b>Bopomofo mode</b>"
 msgstr "<b>注音模式</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:1455
+#: setup/ibus-libpinyin-preferences.ui:1416
 msgid "Selection Keys:"
 msgstr "選詞鍵："
 
-#: setup/ibus-libpinyin-preferences.ui:1492
+#: setup/ibus-libpinyin-preferences.ui:1453
 msgid "Enable Guidekey for Candidates Selection"
 msgstr "啓用選詞引導鍵"
 
-#: setup/ibus-libpinyin-preferences.ui:1509
+#: setup/ibus-libpinyin-preferences.ui:1470
 msgid "Enable Auxiliary Select Keys F1 .. F10"
 msgstr "啓用輔助選詞鍵F1 .. F10"
 
-#: setup/ibus-libpinyin-preferences.ui:1526
+#: setup/ibus-libpinyin-preferences.ui:1487
 msgid "Enable Auxiliary Select Keys Numbers on Keypad"
 msgstr "啓用數字鍵盤輔助選詞鍵"
 
-#: setup/ibus-libpinyin-preferences.ui:1549
+#: setup/ibus-libpinyin-preferences.ui:1510
 msgid "<b>Selection mode</b>"
 msgstr "<b>選詞模式</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:1581
+#: setup/ibus-libpinyin-preferences.ui:1542
 msgid "Feature of Enter key:"
 msgstr "Enter 鍵功能："
 
-#: setup/ibus-libpinyin-preferences.ui:1592
+#: setup/ibus-libpinyin-preferences.ui:1553
 msgid "Commit first candidate"
 msgstr "輸出第一個候選詞"
 
-#: setup/ibus-libpinyin-preferences.ui:1610
+#: setup/ibus-libpinyin-preferences.ui:1571
 msgid "Commit original text"
 msgstr "輸出原本的英文字"
 
-#: setup/ibus-libpinyin-preferences.ui:1632
+#: setup/ibus-libpinyin-preferences.ui:1593
 msgid "<b>Other</b>"
 msgstr "<b>其他</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:1753
+#: setup/ibus-libpinyin-preferences.ui:1714
 msgid "Bopomofo mode"
 msgstr "注音模式"
 
-#: setup/ibus-libpinyin-preferences.ui:1915
+#: setup/ibus-libpinyin-preferences.ui:1876
 msgid "Enable fuzzy syllable"
 msgstr "啓用模糊音"
 
-#: setup/ibus-libpinyin-preferences.ui:2016
+#: setup/ibus-libpinyin-preferences.ui:1977
 msgid "Fuzzy syllable"
 msgstr "模糊音"
 
-#: setup/ibus-libpinyin-preferences.ui:2083
+#: setup/ibus-libpinyin-preferences.ui:2044
 msgid "Tips: Changes may not take effect until ime restarts."
 msgstr "提示：變更可能需要重啓生效。"
 
-#: setup/ibus-libpinyin-preferences.ui:2106
+#: setup/ibus-libpinyin-preferences.ui:2067
 msgid "<b>Dictionary option</b>"
 msgstr "<b>詞典選項</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:2128
+#: setup/ibus-libpinyin-preferences.ui:2089
 msgid "Dictionary"
 msgstr "詞典"
 
-#: setup/ibus-libpinyin-preferences.ui:2169
+#: setup/ibus-libpinyin-preferences.ui:2130
+msgid "Lua Extension"
+msgstr ""
+
+#: setup/ibus-libpinyin-preferences.ui:2144
+msgid "Table Mode"
+msgstr ""
+
+#: setup/ibus-libpinyin-preferences.ui:2158
+#, fuzzy
+msgid "English Mode"
+msgstr "英文"
+
+#: setup/ibus-libpinyin-preferences.ui:2172
+#, fuzzy
+msgid "English Candidate"
+msgstr "英文"
+
+#: setup/ibus-libpinyin-preferences.ui:2186
+#, fuzzy
+msgid "Emoji Candidate"
+msgstr "每頁顯示候選詞條目數量："
+
+#: setup/ibus-libpinyin-preferences.ui:2200
+#, fuzzy
+msgid "Suggestion Candidate"
+msgstr "候選詞排列方向："
+
+#: setup/ibus-libpinyin-preferences.ui:2220
+#, fuzzy
+msgid "<b>Input Modes</b>"
+msgstr "<b>輸入配置</b>"
+
+#: setup/ibus-libpinyin-preferences.ui:2251
 msgid "User Lua Script"
 msgstr "用戶 Lua 腳本"
 
-#: setup/ibus-libpinyin-preferences.ui:2179
+#: setup/ibus-libpinyin-preferences.ui:2261
 msgid "Edit"
 msgstr "編輯"
 
-#: setup/ibus-libpinyin-preferences.ui:2199
+#: setup/ibus-libpinyin-preferences.ui:2281
 msgid "<b>Customize IME</b>"
 msgstr "<b>定製輸入法</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:2234
+#: setup/ibus-libpinyin-preferences.ui:2316
+#: setup/ibus-libpinyin-preferences.ui:2500
 msgid "Export"
 msgstr "導出"
 
-#: setup/ibus-libpinyin-preferences.ui:2249
+#: setup/ibus-libpinyin-preferences.ui:2331
+#: setup/ibus-libpinyin-preferences.ui:2515
 msgid "Import"
 msgstr "導入"
 
-#: setup/ibus-libpinyin-preferences.ui:2265
+#: setup/ibus-libpinyin-preferences.ui:2347
 msgid "User Dictionary"
 msgstr "用戶詞典"
 
-#: setup/ibus-libpinyin-preferences.ui:2290
+#: setup/ibus-libpinyin-preferences.ui:2372
 msgid "Clear All Data"
 msgstr "清除全部數據"
 
-#: setup/ibus-libpinyin-preferences.ui:2310
+#: setup/ibus-libpinyin-preferences.ui:2392
+#: setup/ibus-libpinyin-preferences.ui:2545
 msgid "Clear"
 msgstr "清除"
 
-#: setup/ibus-libpinyin-preferences.ui:2338
+#: setup/ibus-libpinyin-preferences.ui:2420
 msgid ""
 "<b>Dictionary File Format:</b>\n"
 "  Each line contains one of the following:\n"
@@ -613,35 +656,58 @@ msgstr ""
 "      \"短語 拼音\" 或 \"短語 拼音 頻率\"\n"
 "   例如 \"你好 ni'hao\" 或 \"你好 ni'hao 5\"。"
 
-#: setup/ibus-libpinyin-preferences.ui:2351
+#: setup/ibus-libpinyin-preferences.ui:2433
+#: setup/ibus-libpinyin-preferences.ui:2583
 msgid "Help"
 msgstr "幫助"
 
-#: setup/ibus-libpinyin-preferences.ui:2369
+#: setup/ibus-libpinyin-preferences.ui:2451
 msgid "<b>User Dictionary</b>"
 msgstr "<b>用戶詞典</b>"
 
-#: setup/ibus-libpinyin-preferences.ui:2394
+#: setup/ibus-libpinyin-preferences.ui:2487
+#, fuzzy
+msgid "User Table"
+msgstr "用戶數據"
+
+#: setup/ibus-libpinyin-preferences.ui:2573
+#, fuzzy
+msgid ""
+"<b>Table File Format:</b>\n"
+"  Each line contains the following:\n"
+"    \"table_code phrase frequency\" like \"a 啊 100\"."
+msgstr ""
+"<b>詞典文件格式：</b>\n"
+"   每一行包含以下兩者之一：\n"
+"      \"短語 拼音\" 或 \"短語 拼音 頻率\"\n"
+"   例如 \"你好 ni'hao\" 或 \"你好 ni'hao 5\"。"
+
+#: setup/ibus-libpinyin-preferences.ui:2601
+#, fuzzy
+msgid "<b>User Table</b>"
+msgstr "<b>用戶詞典</b>"
+
+#: setup/ibus-libpinyin-preferences.ui:2623
 msgid "User data"
 msgstr "用戶數據"
 
-#: setup/ibus-libpinyin-preferences.ui:2424
+#: setup/ibus-libpinyin-preferences.ui:2653
 msgid "Shortcuts"
 msgstr "快捷鍵"
 
-#: setup/ibus-libpinyin-preferences.ui:2480
+#: setup/ibus-libpinyin-preferences.ui:2709
 msgid "Intelligent Pinyin input method for IBus"
 msgstr "IBus 智能拼音輸入法"
 
-#: setup/ibus-libpinyin-preferences.ui:2493
+#: setup/ibus-libpinyin-preferences.ui:2722
 msgid "<small>Copyright (c) 2011-2012 Peng Wu</small>"
 msgstr "<small>版權所有 (c) 2011-2012 吳鵬</small>"
 
-#: setup/ibus-libpinyin-preferences.ui:2506
+#: setup/ibus-libpinyin-preferences.ui:2735
 msgid "https://github.com/libpinyin/ibus-libpinyin"
 msgstr "https://github.com/libpinyin/ibus-libpinyin"
 
-#: setup/ibus-libpinyin-preferences.ui:2523
+#: setup/ibus-libpinyin-preferences.ui:2752
 msgid ""
 "<small>\n"
 "<b>Authors:</b>\n"
@@ -669,7 +735,7 @@ msgstr ""
 "koterpilla, Zerng07, Hillwood Yang\n"
 "</small>"
 
-#: setup/ibus-libpinyin-preferences.ui:2563
+#: setup/ibus-libpinyin-preferences.ui:2792
 msgid "About"
 msgstr "關於"
 
@@ -688,6 +754,12 @@ msgstr "IBus 注音配置工具"
 #: data/ibus-setup-libbopomofo.desktop.in:4
 msgid "Set ibus-libbopomofo Preferences"
 msgstr "設定 IBus 注音個人偏好"
+
+#~ msgid "Show suggestions."
+#~ msgstr "顯示建議。"
+
+#~ msgid "Show emoji."
+#~ msgstr "顯示表情符號。"
 
 #, fuzzy
 #~ msgid "Intelligent Bopomofo (debug)"
