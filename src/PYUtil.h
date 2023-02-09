@@ -27,6 +27,7 @@
 
 #include <cstdlib>
 #include <string>
+#include <assert.h>
 
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
 #  include <memory>
@@ -43,6 +44,12 @@ namespace std {
     template<typename T> class unique_ptr : public boost::scoped_ptr<T> {};
 };
 
+#endif
+
+#if defined(NDEBUG) || defined(G_DISABLE_ASSERT)
+#define check_result(expr) expr
+#else
+#define check_result(expr) assert(expr)
 #endif
 
 #include <ibus.h>

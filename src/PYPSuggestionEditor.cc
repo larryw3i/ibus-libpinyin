@@ -178,6 +178,7 @@ void
 SuggestionEditor::candidateClicked (guint index, guint button, guint state)
 {
     selectCandidateInPage (index);
+    reset ();
 }
 
 gboolean
@@ -341,7 +342,8 @@ int
 SuggestionEditor::selectCandidateInternal (EnhancedCandidate & candidate)
 {
     switch (candidate.m_candidate_type) {
-    case CANDIDATE_SUGGESTION:
+    case CANDIDATE_PREDICTED_BIGRAM:
+    case CANDIDATE_PREDICTED_PREFIX:
         return m_suggestion_candidates.selectCandidate (candidate);
 
     case CANDIDATE_TRADITIONAL_CHINESE:

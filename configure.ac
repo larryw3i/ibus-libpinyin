@@ -21,8 +21,8 @@
 # if not 1, append datestamp to the version number.
 m4_define([ibus_released], [1])
 m4_define([ibus_major_version], [1])
-m4_define([ibus_minor_version], [12])
-m4_define([ibus_micro_version], [91])
+m4_define([ibus_minor_version], [15])
+m4_define([ibus_micro_version], [0])
 m4_define(ibus_maybe_datestamp,
     m4_esyscmd([if test x]ibus_released[ != x1; then date +.%Y%m%d | tr -d '\n\r'; fi]))
 
@@ -67,7 +67,7 @@ if test -z "$SQLITE3"; then
 fi
 
 PKG_CHECK_MODULES(LIBPINYIN, [
-    libpinyin >= 2.2.1
+    libpinyin >= 2.7.91
 ], [enable_libpinyin=yes])
 
 LIBPINYIN_DATADIR=`$PKG_CONFIG --variable=pkgdatadir libpinyin`
@@ -89,12 +89,7 @@ AC_PATH_PROG(ENV, env)
 AC_SUBST(ENV)
 
 # check python
-AC_ARG_WITH(python,
-    AS_HELP_STRING([--with-python[=PATH]],
-        [Select python2 or python3]),
-    [PYTHON=$with_python], []
-)
-AM_PATH_PYTHON([3.2])
+AM_PATH_PYTHON([3.7])
 
 # check icon_prop_key in IBus.EngineDesc
 AC_MSG_CHECKING([if IBus.EngineDesc has get_icon_prop_key])
@@ -230,6 +225,7 @@ AC_CONFIG_FILES([ po/Makefile.in
 Makefile
 ibus-libpinyin.spec
 lua/Makefile
+scripts/Makefile
 src/Makefile
 src/libpinyin.xml.in
 setup/Makefile
@@ -254,4 +250,3 @@ Build options:
     Build table input mode      $enable_table_input_mode
     Build english input mode    $enable_english_input_mode
 ])
-

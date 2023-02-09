@@ -60,6 +60,8 @@ PinyinEditor::processNumber (guint keyval, guint keycode,
     if (m_text.empty ())
         return FALSE;
 
+    modifiers = cmshm_filter (modifiers);
+
     switch (keyval) {
     case IBUS_0:
     case IBUS_KP_0:
@@ -241,6 +243,12 @@ PinyinEditor::updatePreeditText ()
     }
 
     m_buffer.clear ();
+
+    /* for Legacy mode */
+    if (m_config.sortOption () & SORT_WITHOUT_SENTENCE_CANDIDATE) {
+        hidePreeditText ();
+        return;
+    }
 
     /* probe nbest match candidate */
     lookup_candidate_type_t type;

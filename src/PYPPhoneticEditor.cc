@@ -343,12 +343,24 @@ void
 PhoneticEditor::update (void)
 {
     guint lookup_cursor = getLookupCursor ();
+
+    /* The lookup cursor is not moved here. */
+    if (m_config.sortOption () & SORT_WITHOUT_SENTENCE_CANDIDATE)
+        lookup_cursor = 0;
+
     pinyin_guess_candidates (m_instance, lookup_cursor,
                              m_config.sortOption ());
 
     updateLookupTable ();
     updatePreeditText ();
     updateAuxiliaryText ();
+}
+
+void
+PhoneticEditor::updateAll (void)
+{
+    updatePinyin ();
+    update ();
 }
 
 guint
@@ -377,6 +389,8 @@ PhoneticEditor::selectCandidateInternal (EnhancedCandidate & candidate)
 {
     switch (candidate.m_candidate_type) {
     case CANDIDATE_NBEST_MATCH:
+    case CANDIDATE_LONGER:
+    case CANDIDATE_LONGER_USER:
     case CANDIDATE_NORMAL:
     case CANDIDATE_USER:
         return m_libpinyin_candidates.selectCandidate (candidate);
@@ -415,6 +429,8 @@ PhoneticEditor::removeCandidateInternal (EnhancedCandidate & candidate)
 {
     switch (candidate.m_candidate_type) {
     case CANDIDATE_NBEST_MATCH:
+    case CANDIDATE_LONGER:
+    case CANDIDATE_LONGER_USER:
     case CANDIDATE_NORMAL:
     case CANDIDATE_USER:
         return m_libpinyin_candidates.removeCandidate (candidate);
